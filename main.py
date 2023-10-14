@@ -36,10 +36,16 @@ logging.basicConfig(filename=os.path.join(command.target, command.log_dir), leve
 
 # %% Choose download script.
 url_schema = urlparse(command.source)
-if url_schema.hostname.endswith('51shucheng.net'):
-    downloader = __import__('51shucheng_net')
+downloader_dict = {  # hostname -> module name
+    '51shucheng.net': '51shucheng_net',
+    'qmxs123.com': 'qmxs123_com'
+}
+for hostname, module_name in downloader_dict.items():
+    if url_schema.hostname.endswith(hostname):
+        downloader = __import__(module_name)
+        break
 else:
-    raise Exception(f'[Error] Do not find a downloader for domain {url_schema.hostname}')
+    raise Exception(f'[Error] Cannot find a downloader for domain {url_schema.hostname}')
 
 # %% Download basic information.
 if command.clear_cover or (not os.path.isfile(cover_path)) or (not os.path.isfile(toc_path)):
