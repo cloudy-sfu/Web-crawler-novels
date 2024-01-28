@@ -18,41 +18,38 @@ chrome_110 = {
 }
 session = Session()
 session.trust_env = False
-
+base_url = 'https://www.qmxs123.com'
 
 def get_meta(source):
     cover_page = session.get(url=source, headers=chrome_110)
     if cover_page.status_code != 200:
         raise Exception(f'Fail to get the cover page. Status code: {cover_page.status_code}.')
     else:
-        logging.info('[INFO] Success to get the cover page.')
-    cover_page.encoding = 'utf-8'
+        logging.info('Success to get the cover page.')
     cover_text = BeautifulSoup(cover_page.text, features='html.parser')
-    chapter_list = cover_text.find('div', {'class': 'mulu-list'}).find_all('li')
-    chapter_list = [[x.a.text, x.a['href']] for x in chapter_list]
+    novel = cover_text.find('meta', {'property': 'og:type'}).get('content')
+    chapter_list = cover_text.find('div', {'class': 'listmain'}).select('dd:not([class])')
+    chapter_list = [[x.a.text, base_url + x.a.get('href', '')] for x in chapter_list]
     book = {
-        'title': cover_text.find('div', {'class': 'catalog'}).h1.text,
-        'author': re.sub('.*作者：', '', cover_text.find('div', {'class': 'info'}).text.strip()),
-        'abstract': cover_text.find('div', {'class': 'intro'}).text,
+        'title': cover_text.find('meta', {'property': 'og:title'}).get('content'),
+        'author': cover_text.find('meta', {'property': f'og:{novel}:author'}).get('content'),
+        'abstract': '',
         'chapter_list': chapter_list,
     }
     return book
 
-
 def get_chapter(source):
     chapter_page = session.get(url=source, headers=chrome_110)
     if chapter_page.status_code != 200:
-        logging.warning(f'[Warning] Fail to download {source}. Status code: {chapter_page.status_code}. ')
+        logging.warning(f'Fail to download {source}. Status code: {chapter_page.status_code}. ')
         return
-    chapter_page.encoding = 'utf-8'
     chapter_text = BeautifulSoup(chapter_page.text, features='html.parser')
-    chapter_title = chapter_text.find('h1').text
-    chapter_normal = chapter_text.find('div', {'class': 'neirong'}).text
-    chapter_normal = chapter_normal.replace('\xa0', '')
-    chapter_normal = re.sub('\n+', '\n\n', chapter_normal)
-    chapter_normal = re.sub('<emclass=(.*?)>', '', chapter_normal)
-    chapter_normal = re.sub('</?em>', '', chapter_normal)
-    chapter_normal = re.sub('\n+tang\n+', '', chapter_normal)
-    chapter_normal = re.sub('<\n?p>', '', chapter_normal)
+    chapter_title = chapter_text.find('h1', {'class': 'wap_none'}).text
+    chapter_normal = chapter_text.find('div', {'id': 'chaptercontent'}).text
+    chapter_normal = re.sub(r'^\s*', '', chapter_normal)
+    chapter_normal = re.sub(r'(/p\s*)+', '\n\n', chapter_normal)
+    chapter_normal = re.sub(r'阅读.*关注.*(\s)*.*收藏哦！(\s)*', '', chapter_normal)
+    chapter_normal = re.sub(r'请收藏本站.*m\.qmxs123\.com(\s)*', '', chapter_normal)
+    chapter_normal = chapter_normal.replace('『点此报错』『加入书签』', '')
     chapter = {'title': chapter_title, 'body': chapter_normal}
     return chapter
