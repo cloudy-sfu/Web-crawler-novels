@@ -44,7 +44,8 @@ logging.basicConfig(
 url_schema = urlparse(command.source)
 downloader_dict = {  # hostname -> module name
     '51shucheng.net': 'web_51shucheng_net',
-    'qmxs123.com': 'web_qmxs123_com'
+    'qm11.cc': 'web_qmxs123_com',
+    '99csw.com': 'web_99csw_com',
 }
 for hostname, module_name in downloader_dict.items():
     if url_schema.hostname.endswith(hostname):
