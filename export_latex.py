@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import pickle
+import re
 from argparse import ArgumentParser
 
 # %% Constants.
@@ -30,22 +31,23 @@ with open(os.path.join(target, 'meta.json'), 'r', encoding='utf-8') as f:
 # %% Generate cover page.
 with open('latex_template/book_prefix.tex', 'r') as f:
     book = f.read()
+abstract_gap_lines = re.sub(r'(?<!\n)\n(?!\n)', '\n\n', meta['abstract'])
 book = book.replace(r'\title{}', r'\title{%s}' % meta['title']) \
     .replace(r'\author{}', r'\author{%s}' % meta['author']) \
-    .replace('ABSTRACT', meta['abstract'])
+    .replace('ABSTRACT', abstract_gap_lines)
 
 # %% Generate chapters
 logging.info('Start to combine chapters and format.')
 with open(os.path.join(target, '.toc'), 'rb') as f:
     chapter_list = pickle.load(f)
 for i in chapter_list.index:
-    chapter_path = os.path.join(target, f'chapter_{i}')
+    chapter_path = os.path.join(target, f'chapter_{i}.json')
     try:
-        with open(chapter_path, 'r', encoding='utf-8') as g:
-            book_raw = g.read()
-            title, main_content = book_raw.split('\n', maxsplit=1)
-            book += r'\section{' + title + '}\n'
-            book += main_content
+        with open(chapter_path, 'r') as g:
+            chapter = json.load(g)
+        book += r'\section{' + re.sub(r"\s", '~', chapter['title']) + '}\n'
+        main_content_gap_lines = re.sub(r'(?<!\n)\n(?!\n)', '\n\n', chapter['body'])
+        book += main_content_gap_lines + "\n\n"
     except FileNotFoundError:
         logging.warning(f'Chapter {i} is absent. Please visit '
                         f'{chapter_list.loc[i, "link"]} and save it to {chapter_path}')

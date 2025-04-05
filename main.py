@@ -46,6 +46,7 @@ downloader_dict = {  # hostname -> module name
     '51shucheng.net': 'web_51shucheng_net',
     'qm11.cc': 'web_qmxs123_com',
     '99csw.com': 'web_99csw_com',
+    'qimao.com': 'web_qimao_com',
 }
 for hostname, module_name in downloader_dict.items():
     if url_schema.hostname.endswith(hostname):
@@ -75,7 +76,7 @@ if command.clear_progress:
 chapters_not_downloaded = chapter_list[chapter_list['downloaded'].isna()].copy(deep=True)
 for i, chapter in tqdm(chapters_not_downloaded.iterrows(),
                        total=chapters_not_downloaded.shape[0]):
-    chapter_path = os.path.join(target, f"chapter_{i}")
+    chapter_path = os.path.join(target, f"chapter_{i}.json")
     chapter = downloader.get_chapter(chapter['link'])
     if not chapter:
         chapter_list.loc[i, 'downloaded'] = 1
@@ -85,8 +86,7 @@ for i, chapter in tqdm(chapters_not_downloaded.iterrows(),
                         f'{chapter_list["downloaded"].notna().sum()}. Please manually '
                         f'download the chapter and save at {chapter_path}')
     with open(chapter_path, 'w', encoding='utf-8') as f:
-        f.write(chapter['title'] + '\n')
-        f.write(chapter['body'])
+        json.dump(chapter, f, ensure_ascii=False)
     chapter_list.loc[i, 'downloaded'] = 0
     chapter_list.to_pickle(toc_path)
     logging.info(f'Success to download chapter {i}. Title: {chapter["title"]}.')

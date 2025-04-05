@@ -2,16 +2,17 @@
 
  Download and compile books from online literature websites
 
-![](https://shields.io/badge/dependencies-Python_3.11-blue)
+![](https://shields.io/badge/dependencies-Python_3.12-blue)
 ![](https://shields.io/badge/dependencies-XeLaTex-blue)
 
 Supported websites:
 
-| Website                                                      | Example of the book's index page             |
-| ------------------------------------------------------------ | -------------------------------------------- |
-| [无忧书城](https://www.51shucheng.net/)                      | https://www.51shucheng.net/wangluo/huaqiangu |
-| [七猫小说](https://www.qm11.cc/)                             | https://www.qm11.cc/book/9436/               |
-| [九九藏书网](https://www.99csw.com/index.php) ![](https://shields.io/badge/dependencies-Google_Chrome-orange) | https://www.99csw.com/book/3952/136682.htm   |
+| Website                                       | Example of the book's index page             | Additional dependencies |
+| --------------------------------------------- | -------------------------------------------- | ----------------------- |
+| [无忧书城](https://www.51shucheng.net/)       | https://www.51shucheng.net/wangluo/huaqiangu |                         |
+| [七猫小说](https://www.qm11.cc/)              | https://www.qm11.cc/book/9436/               |                         |
+| [七猫中文网](https://www.qimao.com/)          | https://www.qimao.com/shuku/1761744/         |                         |
+| [九九藏书网](https://www.99csw.com/index.php) | https://www.99csw.com/book/3952/136682.htm   | Google Chrome           |
 
 
 
@@ -43,6 +44,8 @@ Download required fonts to support handling books written in corresponding chara
 | Chinese       | [SourceHanSerifCN-Regular.ttf](https://github.com/wordshub/free-font/blob/master/assets/font/%E4%B8%AD%E6%96%87/%E6%80%9D%E6%BA%90%E5%AD%97%E4%BD%93%E7%B3%BB%E5%88%97/%E6%80%9D%E6%BA%90%E5%AE%8B%E4%BD%93/SourceHanSerifCN-Regular.ttf) |
 
 If the the targeted book is written in multiple languages, the user must find one font that can correctly display all languages. This program doesn't support using multiple fonts.
+
+
 
 ## Usage
 
@@ -84,4 +87,8 @@ python main.py -h
    ```
    python clear_cache.py -t "$local"
    ```
+
+### Proxy
+
+Save proxies config to file `proxies.json` in format of [requests proxies](https://requests.readthedocs.io/en/latest/user/advanced/#proxies).
 

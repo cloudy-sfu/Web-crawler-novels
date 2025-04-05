@@ -1,9 +1,12 @@
-from requests import Session
-from bs4 import BeautifulSoup
-import re
+import json
 import logging
+import os
+import re
 
-chrome_110 = {
+from bs4 import BeautifulSoup
+from requests import Session
+
+chrome_135 = {
     'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,'
               'application/signed-exchange;v=b3;q=0.7',
     'accept-encoding': 'gzip, deflate',
@@ -13,15 +16,19 @@ chrome_110 = {
     'sec-ch-ua': '"Chromium";v="110", "Not A(Brand";v="24", "Google Chrome";v="110"', 'sec-ch-ua-mobile': '?0',
     'sec-ch-ua-platform': '"Windows"', 'sec-fetch-dest': 'document', 'sec-fetch-mode': 'navigate',
     'sec-fetch-site': 'none', 'sec-fetch-user': '?1', 'upgrade-insecure-requests': '1',
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
-                  'Chrome/110.0.0.0 Safari/537.36'
+    'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36"
 }
 session = Session()
-session.trust_env = False
+if os.path.isfile('proxies.json'):
+    with open('proxies.json', 'r') as f:
+        proxies = json.load(f)
+    session.proxies = proxies
+else:
+    session.trust_env = False
 
 
 def get_meta(source):
-    cover_page = session.get(url=source, headers=chrome_110)
+    cover_page = session.get(url=source, headers=chrome_135)
     if cover_page.status_code != 200:
         raise Exception(f'Fail to get the cover page. Status code: {cover_page.status_code}.')
     else:
@@ -40,7 +47,7 @@ def get_meta(source):
 
 
 def get_chapter(source):
-    chapter_page = session.get(url=source, headers=chrome_110)
+    chapter_page = session.get(url=source, headers=chrome_135)
     if chapter_page.status_code != 200:
         logging.warning(f'Fail to download {source}. Status code: {chapter_page.status_code}. ')
         return
