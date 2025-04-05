@@ -10,7 +10,7 @@ Supported websites:
 | Website                                                      | Example of the book's index page             |
 | ------------------------------------------------------------ | -------------------------------------------- |
 | [无忧书城](https://www.51shucheng.net/)                      | https://www.51shucheng.net/wangluo/huaqiangu |
-| 七猫小说                                                     | https://www.qm11.cc/book/9436/               |
+| [七猫小说](https://www.qm11.cc/)                             | https://www.qm11.cc/book/9436/               |
 | [九九藏书网](https://www.99csw.com/index.php) ![](https://shields.io/badge/dependencies-Google_Chrome-orange) | https://www.99csw.com/book/3952/136682.htm   |
 
 
