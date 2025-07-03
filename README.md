@@ -5,15 +5,6 @@
 ![](https://shields.io/badge/dependencies-Python_3.12-blue)
 ![](https://shields.io/badge/dependencies-XeLaTex-blue)
 
-Supported websites:
-
-| Website                                       | Example of the book's index page             | Additional dependencies |
-| --------------------------------------------- | -------------------------------------------- | ----------------------- |
-| [无忧书城](https://www.51shucheng.net/)       | https://www.51shucheng.net/wangluo/huaqiangu |                         |
-| [七猫小说](https://www.qm11.cc/)              | https://www.qm11.cc/book/9436/               |                         |
-| [七猫中文网](https://www.qimao.com/)          | https://www.qimao.com/shuku/1761744/         |                         |
-| [九九藏书网](https://www.99csw.com/index.php) | https://www.99csw.com/book/3952/136682.htm   | Google Chrome           |
-
 
 
 ## Acknowledgment
@@ -23,6 +14,15 @@ Supported websites:
 
 
 ## Install
+
+Supported websites:
+
+| Website                                       | Example of the book's index page             | Additional dependencies |
+| --------------------------------------------- | -------------------------------------------- | ----------------------- |
+| [无忧书城](https://www.51shucheng.net/)       | https://www.51shucheng.net/wangluo/huaqiangu |                         |
+| [七猫小说](https://www.qm11.cc/)              | https://www.qm11.cc/book/9436/               |                         |
+| [七猫中文网](https://www.qimao.com/)          | https://www.qimao.com/shuku/1761744/         |                         |
+| [九九藏书网](https://www.99csw.com/index.php) | https://www.99csw.com/book/3952/136682.htm   | Google Chrome           |
 
 Users are supposed to be familiar with $\LaTeX$ code. Because articles may contain [reserved words](https://en.wikipedia.org/wiki/Reserved_word) in $\LaTeX$ and will lead to compile failure, users should be able to identify and [escape](https://en.wikipedia.org/wiki/Escape_character) it.
 
@@ -51,11 +51,16 @@ If the the targeted book is written in multiple languages, the user must find on
 
 ### Download books
 
-Denote the book's index page is `$book_index`, the local folder to save the book is `$local`. Run the following command to download a book.
+Run `python main.py` followed by arguments in the terminal.
 
-```
-python main.py -s "$book_index" -t "$local"
-```
+This program uses [POSIX style arguments](https://cloudy-sfu.github.io/Documentation/articles/cli_syntax.html).
+
+Arguments:
+
+| Name | Description                        | Required? |
+| ---- | ---------------------------------- | --------- |
+| `-s` | The book's index page.             | Yes       |
+| `-t` | The local folder to save the book. | Yes       |
 
 For more features, run the following command.
 
@@ -64,6 +69,8 @@ python main.py -h
 ```
 
 ### Export to Latex
+
+Denote `$local` is the output folder.
 
 1. Run the following command.
    ```
