@@ -53,7 +53,7 @@ If the the targeted book is written in multiple languages, the user must find on
 
 Run `python main.py` followed by arguments in the terminal.
 
-This program uses [POSIX style arguments](https://cloudy-sfu.github.io/Documentation/articles/cli_syntax.html).
+This program uses [POSIX style arguments](https://gist.github.com/cloudy-sfu/dce5106496125096092c7a7cc7846f7b).
 
 Arguments:
 
