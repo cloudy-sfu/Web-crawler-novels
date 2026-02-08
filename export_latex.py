@@ -5,22 +5,49 @@ import pickle
 import re
 from argparse import ArgumentParser
 
+
+def tex_escape(text):
+    """
+    :param text: a plain text message
+    :return: the message escaped to appear correctly in LaTeX
+    """
+    conv = {
+        '&': r'\&',
+        '%': r'\%',
+        '$': r'\$',
+        '#': r'\#',
+        '_': r'\_',
+        '{': r'\{',
+        '}': r'\}',
+        '~': r'\textasciitilde{}',
+        '^': r'\textasciicircum{}',
+        '\\': r'\textbackslash{}',
+        '<': r'\textless{}',
+        '>': r'\textgreater{}',
+    }
+    regex = re.compile('|'.join(
+        re.escape(str(key))
+        for key in sorted(conv.keys(), key=lambda item: -len(item))
+    ))
+    return regex.sub(lambda match: conv[match.group()], text)
+
+
+# Usage
+raw_text = "Earnings increased by 20% & margin is ~5 points. Use code: \\variable_{x}"
+print(tex_escape(raw_text))
+
 # %% Constants.
 parser = ArgumentParser()
-parser.add_argument('-t', '--target', type=str,
+parser.add_argument('--target', type=str,
                     help='The directory to save the book.')
-parser.add_argument('-l', '--log_dir', type=str,
-                    default='web_crawler_novels.log',
-                    help='Log file\'s name. By default "web_crawler_novels.log".')
-command, _ = parser.parse_known_args()
+cmd, _ = parser.parse_known_args()
 
 # %% Logging.
-target = os.path.abspath(command.target)
+target = os.path.abspath(cmd.target)
 logging.basicConfig(
-    filename=os.path.join(target, command.log_dir).__str__(),
+    filename=os.path.join(cmd.target, "export_latex_log.txt").__str__(),
     level=logging.INFO,
-    format="[%(asctime)s] [%(levelname)s] %(message)s",
-    datefmt='%Y-%m-%d %H:%M:%S',
+    format="[%(levelname)s] %(message)s",
 )
 
 # %% Get meta latex_template
@@ -45,8 +72,11 @@ for i in chapter_list.index:
     try:
         with open(chapter_path, 'r') as g:
             chapter = json.load(g)
-        book += r'\section{' + re.sub(r"\s", '~', chapter['title']) + '}\n'
-        main_content_gap_lines = re.sub(r'(?<!\n)\n(?!\n)', '\n\n', chapter['body'])
+        book += (r'\section{' +
+                 re.sub(r"\s", '~', tex_escape(chapter['title']))
+                 + '}\n')
+        main_content_gap_lines = re.sub(
+            r'(?<!\n)\n(?!\n)', '\n\n', tex_escape(chapter['body']))
         book += main_content_gap_lines + "\n\n"
     except FileNotFoundError:
         logging.warning(f'Chapter {i} is absent. Please visit '

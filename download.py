@@ -2,47 +2,59 @@ import json
 import logging
 import os
 import random
+import sys
 import time
 from argparse import ArgumentParser
 from urllib.parse import urlparse
+import importlib
+
 import pandas as pd
 from tqdm import tqdm
 
+
+def handle_exception(exc_type, exc_value, exc_traceback):
+    sys.__excepthook__(exc_type, exc_value, exc_traceback)
+    sys.exit(1)
+
+
+sys.excepthook = handle_exception
+
 # %% Parse arguments.
 parser = ArgumentParser()
-parser.add_argument('-s', '--source', type=str,
-                    help='The index page of the book at novel website.')
-parser.add_argument('-t', '--target', type=str,
-                    help='The directory to save the book.')
-parser.add_argument('--clear_progress', action='store_true',
-                    help='If set, the downloading progress of chapters will be cleared. '
-                         'The program will overwrite from the first chapter.')
-parser.add_argument('--clear_cover', action='store_true',
-                    help='If set, the program will ignore `clear_progress` flag, get the '
-                         'table of contents, and clear the downloading progress of '
-                         'chapters, but will not delete existed chapter files.')
-parser.add_argument('-l', '--log_dir', type=str,
-                    default='web_crawler_novels.log',
-                    help='Log file\'s name. By default "web_crawler_novels.log".')
-command, _ = parser.parse_known_args()
+parser.add_argument(
+    '--source', type=str, help='URL of the book\'s index page.')
+parser.add_argument(
+    '--target', type=str,
+    help='The book name. It will be the folder name to contain the book. If the book '
+         'name contain special characters, and isn\'t a valid folder name in the current '
+         'operation system, consider a shorter and plain abbreviation name.')
+parser.add_argument(
+    '--clear_progress', action='store_true',
+    help='If set, the downloading progress of chapters will be cleared. The program will '
+         'overwrite from the first chapter.')
+parser.add_argument(
+    '--clear_cover', action='store_true',
+    help='If set, the program will ignore `clear_progress` flag, get the table of '
+         'contents, and clear the downloading progress of chapters, but will not delete '
+         'existed chapter files.')
+cmd, _ = parser.parse_known_args()
 
-# %% Initialize constants.
-target = os.path.abspath(command.target)
+target = os.path.abspath(cmd.target)
 if os.path.isfile(target):
     os.remove(target)
 os.makedirs(target, exist_ok=True)
+logging.basicConfig(
+    filename=os.path.join(cmd.target, "download_log.txt").__str__(),
+    level=logging.INFO,
+    format="[%(levelname)s] %(message)s",
+)
 meta_path = os.path.join(target, 'meta.json')
 toc_path = os.path.join(target, '.toc')
-logging.basicConfig(
-    filename=os.path.join(command.target, command.log_dir).__str__(),
-    level=logging.INFO,
-    format="[%(asctime)s] [%(levelname)s] %(message)s",
-    datefmt='%Y-%m-%d %H:%M:%S',
-)
 
 # %% Choose download script.
-url_schema = urlparse(command.source)
-downloader_dict = {  # hostname -> module name
+url_schema = urlparse(cmd.source)
+downloader_dict = {
+    # hostname -> module name
     '51shucheng.net': 'web_51shucheng_net',
     'qm11.cc': 'web_qmxs123_com',
     '99csw.com': 'web_99csw_com',
@@ -50,18 +62,18 @@ downloader_dict = {  # hostname -> module name
 }
 for hostname, module_name in downloader_dict.items():
     if url_schema.hostname.endswith(hostname):
-        downloader = __import__(module_name)
+        downloader = importlib.import_module(f'crawlers.{module_name}')
         break
 else:
     raise logging.error(f'Cannot find a downloader for domain {url_schema.hostname}')
 
 # %% Download basic information.
-if command.clear_cover or (not os.path.isfile(meta_path)):
-    meta = downloader.get_meta(command.source)
+if cmd.clear_cover or (not os.path.isfile(meta_path)):
+    meta = downloader.get_meta(cmd.source)
     with open(meta_path, 'w', encoding='utf-8') as f:
         json.dump(meta, f, indent=4, ensure_ascii=False)
 
-if command.clear_cover or (not os.path.isfile(toc_path)):
+if cmd.clear_cover or (not os.path.isfile(toc_path)):
     with open(meta_path, 'r', encoding='utf-8') as f:
         meta = json.load(f)
     chapter_list = pd.DataFrame(data=meta['chapter_list'], columns=['name', 'link'])
@@ -71,7 +83,7 @@ else:
     chapter_list = pd.read_pickle(toc_path)
 
 # %% Download chapters.
-if command.clear_progress:
+if cmd.clear_progress:
     chapter_list['downloaded'] = None
 chapters_not_downloaded = chapter_list[chapter_list['downloaded'].isna()].copy(deep=True)
 for i, chapter in tqdm(chapters_not_downloaded.iterrows(),

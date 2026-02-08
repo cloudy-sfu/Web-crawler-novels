@@ -2,7 +2,7 @@
 
  Download and compile books from online literature websites
 
-![](https://shields.io/badge/dependencies-Python_3.12-blue)
+![](https://shields.io/badge/dependencies-Python_3.13-blue)
 ![](https://shields.io/badge/dependencies-XeLaTex-blue)
 
 
@@ -24,76 +24,104 @@ Supported websites:
 | [七猫中文网](https://www.qimao.com/)          | https://www.qimao.com/shuku/1761744/         |                         |
 | [九九藏书网](https://www.99csw.com/index.php) | https://www.99csw.com/book/3952/136682.htm   | Google Chrome           |
 
-Users are supposed to be familiar with $\LaTeX$ code. Because articles may contain [reserved words](https://en.wikipedia.org/wiki/Reserved_word) in $\LaTeX$ and will lead to compile failure, users should be able to identify and [escape](https://en.wikipedia.org/wiki/Escape_character) it.
-
 Create a Python virtual environment and run the following command.
 
-```
+```bash
 pip install -r requirements.txt
 ```
 
-Install [XeLaTex](https://www.overleaf.com/learn/latex/XeLaTeX) and ensure the operation system can recognize it when calling `xelatex` in the terminal.
+Type `xelatex` in terminal and watch the output to confirm XeTex (Tex Live) is installed. If not, follow the instructions below.
 
-Download required fonts to support handling books written in corresponding character sets.
+---
 
-**Required fonts**
+Install R language from https://cran.r-project.org/
 
-| Character set | Font                                                         |
-| ------------- | ------------------------------------------------------------ |
-| Latin         | (None)                                                       |
-| Chinese       | [SourceHanSerifCN-Regular.ttf](https://github.com/wordshub/free-font/blob/master/assets/font/%E4%B8%AD%E6%96%87/%E6%80%9D%E6%BA%90%E5%AD%97%E4%BD%93%E7%B3%BB%E5%88%97/%E6%80%9D%E6%BA%90%E5%AE%8B%E4%BD%93/SourceHanSerifCN-Regular.ttf) |
+Run the following command in R.
 
-If the the targeted book is written in multiple languages, the user must find one font that can correctly display all languages. This program doesn't support using multiple fonts.
+```R
+install.packages('tinytex')
+tinytex::install_tinytex()
+```
+
+To uninstall in the future, run the following command in R.
+
+```R
+tinytex::uninstall_tinytex()
+```
+
+Type `xelatex` in terminal to confirm the installation is successful.
+
+---
+
+Supported characters set in novel: Latin & Greek & Cyrillic & Chinese & Korean & Japanese
 
 
 
 ## Usage
 
-### Download books
+### Basic usage
 
-Run `python main.py` followed by arguments in the terminal.
+![](https://shields.io/badge/OS-Windows-navy)
+![](https://shields.io/badge/dependencies-PowerShell_7-skyblue)
 
-This program uses [POSIX style arguments](https://gist.github.com/cloudy-sfu/dce5106496125096092c7a7cc7846f7b).
+Activate Python virtual environment.
+
+Run the following command in PowerShell with arguments.
+
+Script:
+
+```
+.\main.ps1
+```
 
 Arguments:
 
-| Name | Description                        | Required? |
-| ---- | ---------------------------------- | --------- |
-| `-s` | The book's index page.             | Yes       |
-| `-t` | The local folder to save the book. | Yes       |
+| Name      | Description                                                  | Required? |
+| --------- | ------------------------------------------------------------ | --------- |
+| `-Source` | URL of the book's index page.                                | Yes       |
+| `-Name`   | The book name. It will be the folder name to contain the book. If the book name contain special characters, and isn't a valid folder name in the current operation system, consider a shorter and plain abbreviation name. |           |
 
-For more features, run the following command.
+
+
+### Interrupted Downloads
+
+The program supports downloading book only. It can restart from the interrupted chapter, or from the beginning (use or invalidate  table of content).
+
+Run `python download.py -h` for more details.
 
 ```
-python main.py -h
+usage: download.py [-h] [--source SOURCE] [--target TARGET] [--clear_progress] [--clear_cover]
+
+options:
+  -h, --help        show this help message and exit
+  --source SOURCE   URL of the book's index page.
+  --target TARGET   The book name. It will be the folder name to contain the book. If the book name contain special characters, and isn't a valid folder name in the current operation system, consider
+                    a shorter and plain abbreviation name.
+  --clear_progress  If set, the downloading progress of chapters will be cleared. The program will overwrite from the first chapter.
+  --clear_cover     If set, the program will ignore `clear_progress` flag, get the table of contents, and clear the downloading progress of chapters, but will not delete existed chapter files.
 ```
 
-### Export to Latex
+When the book is downloaded to `$target` folder, run the following command to create the combined Latex file.
 
-Denote `$local` is the output folder.
+```
+python export_latex.py --target $target
+```
 
-1. Run the following command.
-   ```
-   python export_latex.py -t "$local"
-   ```
+Compile Latex file to PDF twice by the following command.
 
-2. Proofread text in `$local/book.tex`, and amend the content manually.
+```
+cd $target
+xelatex book.tex
+xelatex book.tex
+```
 
-3. Copy the required font to `$local`.
+To clear the cached chapter text, back to the program's root folder and run the following command.
 
-4. Run the following command, and review the content of `$local/book.pdf`. If table of content is missing, run again (try maximum 3 times).
-   ```
-   cd $local
-   xelatex book.tex
-   ```
+```
+python clear_cache.py --target $target
+```
 
-5. Manually amend the content of `$local/book.tex` and repeat step 4, until the content of `$local/book.pdf` is correct.
 
-6. Run the following command to clear files after using. The $\LaTeX$ file and the rendered book won't be deleted.
-
-   ```
-   python clear_cache.py -t "$local"
-   ```
 
 ### Proxy
 
