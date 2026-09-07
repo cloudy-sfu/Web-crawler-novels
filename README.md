@@ -3,14 +3,13 @@
  Download and compile books from online literature websites
 
 ![](https://shields.io/badge/dependencies-Python_3.13-blue)
-![](https://shields.io/badge/dependencies-XeLaTex-blue)
-
+![](https://shields.io/badge/dependencies-XeLaTex-darkgreen)
+![](https://shields.io/badge/dependencies-PowerShell_7-navy)
 
 
 ## Acknowledgment
 
 [Cloudflare bypass script](https://github.com/sarperavci/CloudflareBypassForScraping)
-
 
 
 ## Install
@@ -30,62 +29,28 @@ Create a Python virtual environment and run the following command.
 pip install -r requirements.txt
 ```
 
-Type `xelatex` in terminal and watch the output to confirm XeTex (Tex Live) is installed. If not, follow the instructions below.
-
----
-
-Install R language from https://cran.r-project.org/
-
-Run the following command in R.
-
-```R
-install.packages('tinytex')
-tinytex::install_tinytex()
-```
-
-To uninstall in the future, run the following command in R.
-
-```R
-tinytex::uninstall_tinytex()
-```
-
-Type `xelatex` in terminal to confirm the installation is successful.
-
----
+Ensure XeTex (Tex Live) is installed, by executing `xelatex` command in PowerShell.
 
 Supported characters set in novel: Latin & Greek & Cyrillic & Chinese & Korean & Japanese
 
 
-
 ## Usage
-
-### Basic usage
-
-![](https://shields.io/badge/OS-Windows-navy)
-![](https://shields.io/badge/dependencies-PowerShell_7-skyblue)
 
 Activate Python virtual environment.
 
-Run the following command in PowerShell with arguments.
-
-Script:
-
-```
-.\main.ps1
-```
+In PowerShell, let the current folder be the program's root folder. Run `main.ps1` with the following arguments.
 
 Arguments:
 
-| Name      | Description                                                  | Required? |
-| --------- | ------------------------------------------------------------ | --------- |
-| `-Source` | URL of the book's index page.                                | Yes       |
-| `-Name`   | The book name. It will be the folder name to contain the book. If the book name contain special characters, and isn't a valid folder name in the current operation system, consider a shorter and plain abbreviation name. |           |
+| Name      | Required? | Description                                                  |
+| --------- | --------- | ------------------------------------------------------------ |
+| `-Source` | ✓         | URL of the book's index page.                                |
+| `-Name`   |           | The book name. It will be the folder name to contain the book. If the book name contain special characters, and isn't a valid folder name in the current operation system, consider a shorter and plain abbreviation name. |
 
 
+### Customized usage
 
-### Interrupted Downloads
-
-The program supports downloading book only. It can restart from the interrupted chapter, or from the beginning (use or invalidate  table of content).
+The program supports downloading book only. It can restart from the interrupted chapter, or from the beginning (use or invalidate table of content).
 
 Run `python download.py -h` for more details.
 
@@ -101,7 +66,9 @@ options:
   --clear_cover     If set, the program will ignore `clear_progress` flag, get the table of contents, and clear the downloading progress of chapters, but will not delete existed chapter files.
 ```
 
-When the book is downloaded to `$target` folder, run the following command to create the combined Latex file.
+Let `$target` be the path of the downloaded book.
+
+Run the following command to create the combined Latex file from the downloaded book.
 
 ```
 python export_latex.py --target $target
@@ -115,12 +82,15 @@ xelatex book.tex
 xelatex book.tex
 ```
 
-To clear the cached chapter text, back to the program's root folder and run the following command.
+> [!note]
+> 
+> It compiles twice to fix the known problem that table of content is not correctly rendered when compiling only once.
+
+To delete the cached chapter text, back to the program's root folder and run the following command.
 
 ```
 python clear_cache.py --target $target
 ```
-
 
 
 ### Proxy
