@@ -19,7 +19,7 @@ Supported websites:
 | Website                                       | Example of the book's index page             | Additional dependencies |
 | --------------------------------------------- | -------------------------------------------- | ----------------------- |
 | [无忧书城](https://www.51shucheng.net/)       | https://www.51shucheng.net/wangluo/huaqiangu |                         |
-| [七猫小说](https://www.qm11.cc/)              | https://www.qm11.cc/book/9436/               |                         |
+| [七猫小说](https://www.qm11.cc/)              | https://www.qm111.cc/book/9436/              |                         |
 | [七猫中文网](https://www.qimao.com/)          | https://www.qimao.com/shuku/1761744/         |                         |
 | [九九藏书网](https://www.99csw.com/index.php) | https://www.99csw.com/book/3952/136682.htm   | Google Chrome           |
 

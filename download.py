@@ -56,7 +56,7 @@ url_schema = urlparse(cmd.source)
 downloader_dict = {
     # hostname -> module name
     '51shucheng.net': 'web_51shucheng_net',
-    'qm11.cc': 'web_qmxs123_com',
+    'qm111.cc': 'web_qmxs123_com',
     '99csw.com': 'web_99csw_com',
     'qimao.com': 'web_qimao_com',
 }
