@@ -3,8 +3,7 @@
  Download and compile books from online literature websites
 
 ![](https://shields.io/badge/dependencies-Python_3.13-blue)
-![](https://shields.io/badge/dependencies-XeLaTex-darkgreen)
-![](https://shields.io/badge/dependencies-PowerShell_7-navy)
+![](https://shields.io/badge/dependencies-PowerShell_≥_7.4-navy)
 
 
 ## Acknowledgment
@@ -29,9 +28,7 @@ Create a Python virtual environment and run the following command.
 pip install -r requirements.txt
 ```
 
-Ensure XeTex (Tex Live) is installed, by executing `xelatex` command in PowerShell.
-
-Supported characters set in novel: Latin & Greek & Cyrillic & Chinese & Korean & Japanese
+Supported characters set in novel: Latin, Greek, Cyrillic, Chinese, Korean, Japanese.
 
 
 ## Usage
@@ -47,6 +44,9 @@ Arguments:
 | `-Source` | ✓         | URL of the book's index page.                                |
 | `-Name`   |           | The book name. It will be the folder name to contain the book. If the book name contain special characters, and isn't a valid folder name in the current operation system, consider a shorter and plain abbreviation name. |
 
+Permanent effects:
+
+[Tinytex](https://github.com/rstudio/tinytex) will be automatically installed, if it's not installed yet.
 
 ### Customized usage
 

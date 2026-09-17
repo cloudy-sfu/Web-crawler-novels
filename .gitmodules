@@ -1,0 +1,3 @@
+[submodule "Tinytex-installer"]
+	path = Tinytex-installer
+	url = https://github.com/cloudy-sfu/Tinytex-installer
